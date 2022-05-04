@@ -1,4 +1,4 @@
-package example
+package zioexperimenting
 
 import zio._
 
@@ -15,10 +15,14 @@ object Main extends ZIOAppDefault {
       _ <- Console.printLine(time)
     } yield ()
 
-  private val p = ZEnv.services.locallyWith(_.add(MyClock.clock).add(MyConsole.console))(program)
+  private def withClock[R, E, A](clock: Clock)(zio: ZIO[R, E, A]) =
+    ZEnv.services.locallyWith(_.add(clock))(zio)
+
+  private def withConsole[R, E, A](console: Console)(zio: ZIO[R, E, A]) =
+    ZEnv.services.locallyWith(_.add(console))(zio)
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
-    p
+    withConsole(MyConsole.console)(withClock(MyClock.clock)(program))
 }
 
 object MyClock {
@@ -40,8 +44,6 @@ object MyClock {
 
     def javaClock(implicit trace: Trace): UIO[time.Clock] = ???
   }
-  val layer: ULayer[Clock] =
-    ZLayer.succeed(clock)
 }
 
 object MyConsole {
@@ -60,6 +62,4 @@ object MyConsole {
 
     override def readLine(implicit trace: Trace): IO[IOException, String] = ???
   }
-
-  val layer: ULayer[Console] = ZLayer.succeed(console)
 }
