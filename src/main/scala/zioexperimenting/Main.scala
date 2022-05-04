@@ -15,11 +15,14 @@ object Main extends ZIOAppDefault {
       _ <- Console.printLine(time)
     } yield ()
 
+  private def withBasicService[A: Tag, R, E, B](a: A)(zio: ZIO[R, E, B]) =
+    ZEnv.services.locallyWith(_.add(a))(zio)
+
   private def withClock[R, E, A](clock: Clock)(zio: ZIO[R, E, A]) =
-    ZEnv.services.locallyWith(_.add(clock))(zio)
+    withBasicService(clock)(zio)
 
   private def withConsole[R, E, A](console: Console)(zio: ZIO[R, E, A]) =
-    ZEnv.services.locallyWith(_.add(console))(zio)
+    withBasicService(console)(zio)
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
     withConsole(MyConsole.console)(withClock(MyClock.clock)(program))
