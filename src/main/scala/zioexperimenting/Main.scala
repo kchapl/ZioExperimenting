@@ -25,7 +25,11 @@ object Main extends ZIOAppDefault {
     withBasicService(console)(zio)
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
-    withConsole(MyConsole.console)(withClock(MyClock.clock)(program))
+    withConsole(MyConsole.console)(withClock(MyClock.clock)(for {
+      args <- ZIOAppArgs.getArgs
+      _ <- Console.printLine(args.toList.headOption)
+      _ <- program
+    } yield ()))
 }
 
 object MyClock {
