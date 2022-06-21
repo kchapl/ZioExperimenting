@@ -9,10 +9,13 @@ import java.util.concurrent.TimeUnit
 
 object Main extends ZIOAppDefault {
 
+//  private val stream = zio.ZIO.str.stream ZStream.iterate(0)(_ + 1)
+
   private val program =
     for {
       time <- Clock.currentDateTime
       _ <- Console.printLine(time)
+      //  x <- stream.take(5)
     } yield ()
 
   private def withBasicService[A: Tag, R, E, B](a: A)(zio: ZIO[R, E, B]) =
@@ -24,11 +27,11 @@ object Main extends ZIOAppDefault {
   private def withConsole[R, E, A](console: Console)(zio: ZIO[R, E, A]) =
     withBasicService(console)(zio)
 
-  override def run: ZIO[ZIOAppArgs, IOException, Unit] =
+  override def run: ZIO[ZIOAppArgs, Throwable, Unit] =
     withConsole(MyConsole.console)(withClock(MyClock.clock)(for {
       args <- ZIOAppArgs.getArgs
       _ <- Console.printLine(args.toList.headOption)
-      _ <- program
+      _ <- program // .provide(RequestsLive.layer)
     } yield ()))
 }
 
