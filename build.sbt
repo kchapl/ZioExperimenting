@@ -3,7 +3,7 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.example"
 ThisBuild / organizationName := "example"
 
-val zioVersion = "2.0.0-RC6"
+val zioVersion = "2.0.21"
 
 lazy val root = (project in file("."))
   .settings(
