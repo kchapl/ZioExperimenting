@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
       "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
       "dev.zio" %% "zio-mock" % "1.0.0-RC6" % Test,
       "com.softwaremill.sttp.client3" %% "httpclient-backend-zio" % "3.5.2",
-      "com.lihaoyi" %% "requests" % "0.7.0",
+      "com.lihaoyi" %% "requests" % "0.7.1",
     ),
   )
 
